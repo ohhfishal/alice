@@ -8,6 +8,7 @@ import (
 )
 
 
+
 func NewMockWriter() io.Writer {
     var buffer bytes.Buffer 
     return (io.Writer)(&buffer)
@@ -18,17 +19,40 @@ func NewMockReader(content *bytes.Buffer) io.Reader {
 }
 
 func NewTestEvents() EventGroup {
-    a := Event{"abc", time.Now(), "full event"}
+    now := time.Now()
+    a := Event{
+        Name: "abc",
+        Date: &now,
+        Description: "full event",
+    }
     b := Event{
-        Name: "a",
-        Date: time.Now(),
+        Name: "abc",
+        Date: &now,
+        Description: "full event",
     }
     c := Event{}
+    d := Event{
+        Name: "abc",
+        Head: &(Task{}),
+    }
+    e := Event{
+        Name: "abc",
+        Head: &(Task{ Description: "Marshaling"  }),
+    }
+    f := Event{
+        Name: "abc",
+        Head: &(Task{
+            Description: "Marshaling",
+        }),
+    }
 
     var group EventGroup
     group.Append(&a)
     group.Append(&b)
     group.Append(&c)
+    group.Append(&d)
+    group.Append(&e)
+    group.Append(&f)
     return group
 
 }
@@ -52,5 +76,6 @@ func TestReadAndWrite(t *testing.T) {
     if count != len(events.events) {
         t.Errorf("%d events read. Expected %d", count, len(events.events))
     }
+    // TODO: Validate that all the events are what we expect
 
 }

@@ -8,7 +8,7 @@ import (
 type Task struct {
     Description string `json:"description,omitempty"`
     Status Status `json:"status,omitempty"`
-    Date time.Time `json:"date,omitempty"`
+    Date *time.Time `json:"date,omitempty"`
     Subtasks []Task `json:"subtasks,omitempty"`
 }
 

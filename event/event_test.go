@@ -19,24 +19,31 @@ func NewMockReader(content *bytes.Buffer) io.Reader {
 }
 
 func NewTestEvents() EventGroup {
+    now := time.Now()
     a := Event{
         Name: "abc",
-        Date: time.Now(),
+        Date: &now,
         Description: "full event",
     }
     b := Event{
         Name: "abc",
-        Date: time.Now(),
+        Date: &now,
         Description: "full event",
     }
     c := Event{}
     d := Event{
         Name: "abc",
-        Head: Task{},
+        Head: &(Task{}),
     }
     e := Event{
         Name: "abc",
-        Head: Task{ Description: "Marshaling"  },
+        Head: &(Task{ Description: "Marshaling"  }),
+    }
+    f := Event{
+        Name: "abc",
+        Head: &(Task{
+            Description: "Marshaling",
+        }),
     }
 
     var group EventGroup
@@ -45,6 +52,7 @@ func NewTestEvents() EventGroup {
     group.Append(&c)
     group.Append(&d)
     group.Append(&e)
+    group.Append(&f)
     return group
 
 }

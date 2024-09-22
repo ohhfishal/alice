@@ -9,9 +9,9 @@ import (
 
 type Event struct {
     Name string `json:"name,omitempty"`
-    Date time.Time `json:"date,omitempty"`
+    Date *time.Time `json:"date,omitempty"`
     Description string `json:"description,omitempty"`
-    Head Task `json:"head,omitempty"`
+    Head *Task `json:"head,omitempty"`
     Tasks []Task `json:"tasks,omitempty"`
     
 }

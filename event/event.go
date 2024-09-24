@@ -8,11 +8,23 @@ import (
 )
 
 type Event struct {
-	Name        string     `json:"name,omitempty"`
-	Date        *time.Time `json:"date,omitempty"`
 	Description string     `json:"description,omitempty"`
-	Head        *Task      `json:"head,omitempty"`
-	Tasks       []Task     `json:"tasks,omitempty"`
+	Date        *time.Time `json:"date,omitempty"`
+	Status      Status     `json:"status,omitempty"`
+	Children    []Event    `json:"children,omitempty"`
+}
+
+func NewTask(description string) *Event {
+	return &Event{
+		Description: description,
+		Status:      IN_PROGRESS,
+	}
+}
+
+func NewEvent(description string) *Event {
+	return &Event{
+		Description: description,
+	}
 }
 
 func (event Event) Save(writer io.Writer) error {
@@ -23,4 +35,18 @@ func (event Event) Save(writer io.Writer) error {
 	// Disable indentation
 	encoder.SetIndent("", "")
 	return encoder.Encode(event)
+}
+
+func (e Event) IsDue() bool {
+	return e.Date.After(time.Now())
+}
+
+func (e Event) Complete() error {
+	e.Status = DONE
+
+	// Note this behavior may not always be wanted
+	for _, task := range e.Children {
+		task.Complete()
+	}
+	return nil
 }

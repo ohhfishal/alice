@@ -4,16 +4,20 @@ import (
 	"fmt"
 	"os"
 
+  alice "github.com/ohhfishal/alice/api/v1"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// TODO: Add a viper config.
-//
-//	also include an editor in vipe config as well as file
-var file string
+type Config struct {
+  Config alice.Config 
+}
+
+var c Config
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&file, "file", "test.txt", "task file")
+	rootCmd.PersistentFlags().StringVarP(&c.Config.Filepath, "file", "f", "test.txt", "task file")
+  viper.BindPFlag("file", rootCmd.PersistentFlags().Lookup("file"))
 }
 
 var rootCmd = &cobra.Command{
@@ -21,6 +25,7 @@ var rootCmd = &cobra.Command{
 	Short: "alice is a simple task/event tracker",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hello world")
+		fmt.Println(c.Config)
 	},
 }
 

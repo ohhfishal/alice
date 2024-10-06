@@ -1,4 +1,4 @@
-package event
+package task
 
 import (
 	"encoding/json"
@@ -6,17 +6,17 @@ import (
 	"os"
 )
 
-type EventGroup struct {
-	events []*Event
+type TaskGroup struct {
+	events []*Task
 }
 
-func NewFromFile(path string) (*EventGroup, error) {
+func NewFromFile(path string) (*TaskGroup, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 
-	var group EventGroup
+	var group TaskGroup
 	_, err = group.Load(file)
 	if err != nil {
 		return nil, err
@@ -24,11 +24,11 @@ func NewFromFile(path string) (*EventGroup, error) {
 	return &group, nil
 }
 
-func (group *EventGroup) Append(event *Event) {
+func (group *TaskGroup) Append(event *Task) {
 	group.events = append(group.events, event)
 }
 
-func (group EventGroup) Save(writer io.Writer) error {
+func (group TaskGroup) Save(writer io.Writer) error {
 	for i := 0; i < len(group.events); i++ {
 		if err := group.events[i].Save(writer); err != nil {
 			return err
@@ -37,18 +37,18 @@ func (group EventGroup) Save(writer io.Writer) error {
 	return nil
 }
 
-func (group *EventGroup) Load(reader io.Reader) (int, error) {
+func (group *TaskGroup) Load(reader io.Reader) (int, error) {
 	initialLength := len(group.events)
 	for {
-		var newEvent Event
+		var newTask Task
 		decoder := json.NewDecoder(reader)
 
-		if err := decoder.Decode(&newEvent); err == io.EOF {
+		if err := decoder.Decode(&newTask); err == io.EOF {
 			return len(group.events) - initialLength, nil
 		} else if err != nil {
 			return len(group.events) - initialLength, err
 		}
 		reader = decoder.Buffered()
-		group.Append(&newEvent)
+		group.Append(&newTask)
 	}
 }

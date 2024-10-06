@@ -1,4 +1,4 @@
-package event
+package task
 
 import (
 	"bytes"
@@ -16,26 +16,26 @@ func NewMockReader(content *bytes.Buffer) io.Reader {
 	return (io.Reader)(content)
 }
 
-func NewTestEvents() EventGroup {
+func NewTestTasks() TaskGroup {
 	now := time.Now()
-	a := Event{
+	a := Task{
 		Date:        &now,
 		Description: "full event",
 	}
-	b := Event{
+	b := Task{
 		Date:        &now,
 		Description: "full event",
 	}
-	c := Event{}
-	d := Event{
+	c := Task{}
+	d := Task{
 		Description: "abc",
 	}
-	e := Event{
+	e := Task{
 		Description: "test",
 	}
-	f := Event{}
+	f := Task{}
 
-	var group EventGroup
+	var group TaskGroup
 	group.Append(&a)
 	group.Append(&b)
 	group.Append(&c)
@@ -47,9 +47,9 @@ func NewTestEvents() EventGroup {
 }
 
 func TestReadAndWrite(t *testing.T) {
-	var events, results EventGroup
+	var events, results TaskGroup
 	writer := NewMockWriter()
-	events = NewTestEvents()
+	events = NewTestTasks()
 
 	err := events.Save(writer)
 	if err != nil {

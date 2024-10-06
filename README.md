@@ -1,3 +1,5 @@
 
 # alice
-A go library for interacting with an event/todo list using local files.
+A go library/cli for interacting with a todo list using local files.
+
+**NOTE: Still under development nothing is considered stable**

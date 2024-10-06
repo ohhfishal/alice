@@ -1,4 +1,4 @@
-package event
+package task
 
 import (
 	"encoding/json"
@@ -7,27 +7,28 @@ import (
 	"time"
 )
 
-type Event struct {
-	Description string     `json:"description,omitempty"`
-	Date        *time.Time `json:"date,omitempty"`
-	Status      Status     `json:"status,omitempty"`
-	Children    []Event    `json:"children,omitempty"`
+type Task struct {
+	Description  string     `json:"description,omitempty"`
+	Date         *time.Time `json:"date,omitempty"`
+	Status       Status     `json:"status,omitempty"`
+	Children     []Task     `json:"children,omitempty"`
+	ExpiresOnDue bool       `json:"expires_on_due"`
 }
 
-func NewTask(description string) *Event {
-	return &Event{
+func NewTask(description string) *Task {
+	return &Task{
 		Description: description,
 		Status:      IN_PROGRESS,
 	}
 }
 
-func NewEvent(description string) *Event {
-	return &Event{
+func NewEvent(description string) *Task {
+	return &Task{
 		Description: description,
 	}
 }
 
-func (event Event) Save(writer io.Writer) error {
+func (event Task) Save(writer io.Writer) error {
 	encoder := json.NewEncoder(writer)
 	if encoder == nil {
 		return fmt.Errorf("failed to create encoder")
@@ -37,11 +38,11 @@ func (event Event) Save(writer io.Writer) error {
 	return encoder.Encode(event)
 }
 
-func (e Event) IsDue() bool {
+func (e Task) IsDue() bool {
 	return e.Date.After(time.Now())
 }
 
-func (e Event) Complete() error {
+func (e Task) Complete() error {
 	e.Status = DONE
 
 	// Note this behavior may not always be wanted

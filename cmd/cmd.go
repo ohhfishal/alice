@@ -7,6 +7,8 @@ import (
   "github.com/spf13/cobra"
 )
 
+// TODO: Add a viper config.
+//       also include an editor in vipe config as well as file
 var file string
 
 func init() {

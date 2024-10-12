@@ -1,4 +1,4 @@
-package v1
+package alice
 
 import (
 	"errors"
@@ -6,18 +6,24 @@ import (
 	"github.com/ohhfishal/alice/task"
 )
 
-type Config struct {
+type Alice struct {
 	Filepath string
 }
 
-func (c Config) Add(task task.Task) error {
+func NewAPI(filepath string) API {
+  return &Alice {
+    Filepath: filepath,
+  }
+}
+
+func (c Alice) Create(task task.Task) error {
 	return file.AppendToFile(task, c.Filepath)
 }
 
-func (c Config) Delete(query task.Query) error {
+func (c Alice) Delete(query task.Query) error {
 	return errors.New("DELETE not implemented")
 }
 
-func (c Config) Filter(query task.Query) error {
+func (c Alice) Filter(query task.Query) error {
 	return errors.New("FILTER not implemented")
 }

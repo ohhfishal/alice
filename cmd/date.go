@@ -1,16 +1,16 @@
 package cmd
 
-type date string
+type _Date string
 
-func (d date) String() string {
+func (d _Date) String() string {
   return (string)(d)
 }
 
-func (d date) Set(string) error {
-  // TODO: Validate its something like "tomorrow@noon" or an actual date
+func (d _Date) Set(string) error {
+  // TODO: Vali_Date its something like "tomorrow@noon" or an actual _Date
   return nil
 }
 
-func (d date) Type() string {
-  return "date"
+func (d _Date) Type() string {
+  return "_Date"
 }

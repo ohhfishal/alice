@@ -9,7 +9,7 @@ import (
 
 type Task struct {
 	Description  string     `json:"description,omitempty"`
-	Date         *time.Time `json:"date,omitempty"`
+	Date         time.Time `json:"date,omitempty"`
 	Status       Status     `json:"status,omitempty"`
 	Children     []Task     `json:"children,omitempty"`
 	ExpiresOnDue bool       `json:"expires_on_due"`

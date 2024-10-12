@@ -2,6 +2,7 @@ package cmd
 
 import (
   "fmt"
+  "strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -13,7 +14,6 @@ func NewCreateCommand() *cobra.Command {
   var createCmd = &cobra.Command{
     Use:   "create",
     Short: "Create a new task or event",
-    // Args:  cobra.MinimumNArgs(1),
     Run: func(cmd *cobra.Command, args []string) {
       cmd.Help()
     },
@@ -24,10 +24,21 @@ func NewCreateCommand() *cobra.Command {
   return createCmd
 }
 
-func NewTask(flags *pflag.FlagSet) (task.Task, error) {
-  var t task.Task
+func NewTask(description string, args *pflag.FlagSet) (*task.Task, error) {
+  t := task.NewTask(description)
 
+  dueString, err := args.GetString("date")
+  if err != nil {
+    return nil, err
+  }
+
+  due, err := task.StringToTime(dueString)
+  if err != nil {
+    return nil, err
+  }
+  t.Date = *due
   return t, nil
+
 }
 
 func NewApi(flags *pflag.FlagSet)  (alice.API, error) {
@@ -40,7 +51,6 @@ func NewApi(flags *pflag.FlagSet)  (alice.API, error) {
 
 }
 
-
 func _NewCreateTaskCmd() *cobra.Command {
   var taskCmd = &cobra.Command {
     Use : "task DESCRIPTION",
@@ -52,11 +62,12 @@ func _NewCreateTaskCmd() *cobra.Command {
         return fmt.Errorf("api creation: %w", err)
       }
 
-      newTask, err := NewTask(cmd.Flags())
+      description := strings.Join(args[:], " ")
+      newTask, err := NewTask(description, cmd.Flags())
       if err != nil {
         return fmt.Errorf("task creation: %w", err)
       }
-      return api.Create(newTask)
+      return api.Create(*newTask)
     },
   }
   return taskCmd

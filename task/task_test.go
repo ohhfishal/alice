@@ -19,11 +19,11 @@ func NewMockReader(content *bytes.Buffer) io.Reader {
 func NewTestTasks() TaskGroup {
 	now := time.Now()
 	a := Task{
-		Date:        &now,
+		Date:        now,
 		Description: "full event",
 	}
 	b := Task{
-		Date:        &now,
+		Date:        now,
 		Description: "full event",
 	}
 	c := Task{}

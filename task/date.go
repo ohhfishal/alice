@@ -1,6 +1,7 @@
 package task
 
 import (
+  "errors"
   "fmt"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 
 func StringToTime(humanReadable string) (*time.Time, error) {
   if humanReadable == "" {
-    return nil, nil
+    return nil, errors.New("empty string")
   }
 
   reference := time.Now()

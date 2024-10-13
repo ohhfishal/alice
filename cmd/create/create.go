@@ -13,9 +13,9 @@ func NewCreateCommand(api alice.API) *cobra.Command {
       cmd.Help()
     },
   }
-  createCmd.PersistentFlags().StringP("date", "d", "", "due date")
 
-  createCmd.AddCommand(_NewCreateTaskCmd(api))
+  createCmd.AddCommand(NewTaskCmd(api))
+  createCmd.AddCommand(NewEventCmd(api))
   return createCmd
 }
 

@@ -22,8 +22,10 @@ func NewTask(description string) *Task {
 	}
 }
 
-func NewEvent(description string) *Task {
+func NewEvent(dueDate time.Time, description string) *Task {
 	return &Task{
+    Date: dueDate,
+    ExpiresOnDue: true,
 		Description: description,
 	}
 }

@@ -10,7 +10,7 @@ import (
   "github.com/ohhfishal/alice/task"
 )
 
-func _NewCreateTaskCmd(api alice.API) *cobra.Command {
+func NewTaskCmd(api alice.API) *cobra.Command {
   var taskCmd = &cobra.Command {
     Use : "task DESCRIPTION",
     Short: "Create a new task",
@@ -19,11 +19,12 @@ func _NewCreateTaskCmd(api alice.API) *cobra.Command {
       description := strings.Join(args[:], " ")
       newTask, err := NewTask(description, cmd.Flags())
       if err != nil {
-        return fmt.Errorf("task creation: %w", err)
+        return fmt.Errorf("event creation: %w", err)
       }
       return api.Create(*newTask)
     },
   }
+  taskCmd.PersistentFlags().StringP("date", "d", "", "due date")
   return taskCmd
 }
 

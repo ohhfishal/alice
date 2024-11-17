@@ -12,7 +12,7 @@ import (
 func CreateFlags() *pflag.FlagSet {
 	flags := pflag.NewFlagSet("create", pflag.ContinueOnError)
 	flags.StringArray("tags", []string{}, "tags to add to the new task")
-	flags.BoolP("can-create-file", "c", false, "enable creating of missing files")
+	flags.BoolP("can-create-file", "C", false, "enable creating of missing files")
 	return flags
 }
 

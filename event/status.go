@@ -1,21 +1,9 @@
 package event
 
-import (
-	"fmt"
-)
 
-type Status uint
+type Status string
 
 const (
-	IN_PROGRESS = iota
-	DONE
+	IN_PROGRESS = "ACTIVE"
+	DONE = "DONE"
 )
-
-func (s Status) Valid() error {
-	switch {
-	case s < IN_PROGRESS || s > DONE:
-		return fmt.Errorf("%d is not a valid Status", s)
-	default:
-		return nil
-	}
-}

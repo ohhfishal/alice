@@ -24,6 +24,8 @@ func NewRoot(args []string) *cobra.Command {
 	rootCmd.PersistentFlags().AddFlagSet(RootFlags())
 	rootCmd.Flags().AddFlagSet(CreateFlags())
 	rootCmd.SetArgs(args)
+
+  rootCmd.AddCommand(NewList(args))
 	return rootCmd
 }
 

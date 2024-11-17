@@ -1,69 +1,57 @@
-package event
+package event_test
 
 import (
 	"bytes"
-	"io"
+	"fmt"
 	"testing"
 	"time"
+
+	"github.com/ohhfishal/alice/event"
 )
 
-func NewMockWriter() io.Writer {
-	var buffer bytes.Buffer
-	return (io.Writer)(&buffer)
+func cmp(e1, e2 event.Event) error {
+	switch {
+	case e1.Description != e2.Description:
+		return fmt.Errorf("Description not equal %v != %v", e1.Description, e2.Description)
+	case !e1.Due.Equal(e2.Due):
+		return fmt.Errorf("Results not equal %v != %v", e2.Due, e2.Due)
+	default:
+		return nil
+	}
 }
 
-func NewMockReader(content *bytes.Buffer) io.Reader {
-	return (io.Reader)(content)
-}
-
-func NewTestEvents() EventGroup {
-	now := time.Now()
-	a := Event{
-		Date:        &now,
-		Description: "full event",
-	}
-	b := Event{
-		Date:        &now,
-		Description: "full event",
-	}
-	c := Event{}
-	d := Event{
-		Description: "abc",
-	}
-	e := Event{
-		Description: "test",
-	}
-	f := Event{}
-
-	var group EventGroup
-	group.Append(&a)
-	group.Append(&b)
-	group.Append(&c)
-	group.Append(&d)
-	group.Append(&e)
-	group.Append(&f)
-	return group
-
-}
-
-func TestReadAndWrite(t *testing.T) {
-	var events, results EventGroup
-	writer := NewMockWriter()
-	events = NewTestEvents()
-
-	err := events.Save(writer)
-	if err != nil {
-		t.Error(err)
+func TestMarshaling(t *testing.T) {
+	tests := []struct {
+		Description string
+		Options     []event.Option
+	}{
+		{Description: "a", Options: []event.Option{}},
+		{Description: "b", Options: []event.Option{event.Due(time.Now())}},
 	}
 
-	reader := NewMockReader(writer.(*bytes.Buffer))
-	count, err := results.Load(reader)
-	if err != nil {
-		t.Error(err)
-	}
-	if count != len(events.events) {
-		t.Errorf("%d events read. Expected %d", count, len(events.events))
-	}
-	// TODO: Validate that all the events are what we expect
+	for _, test := range tests {
+		e, err := event.New(test.Description, test.Options...)
+		if err != nil {
+			t.Errorf("New(%s, %v) got an error %v", test.Description, test.Options, err)
+		}
 
+		if e.Description != test.Description {
+			t.Errorf("Description incorrect. Got %s expected %s", e.Description, test.Description)
+		}
+
+		buffer := bytes.NewBuffer([]byte{})
+		e.To(buffer)
+		result, err := event.NewFrom(buffer)
+		if err != nil {
+			t.Errorf("NewFrom got an error, %v", err)
+		}
+
+		if len(result) != 1 {
+			t.Error("Did not get 1 event")
+		}
+
+		if err := cmp(*e, result[0]); err != nil {
+			t.Error(err)
+		}
+	}
 }

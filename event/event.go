@@ -2,51 +2,64 @@ package event
 
 import (
 	"encoding/json"
-	"fmt"
+  "fmt"
 	"io"
 	"time"
 )
 
+type Option func(*Event) error
 type Event struct {
-	Description string     `json:"description,omitempty"`
-	Date        *time.Time `json:"date,omitempty"`
-	Status      Status     `json:"status,omitempty"`
-	Children    []Event    `json:"children,omitempty"`
+	Description string    `json:"description"`
+	Status      Status    `json:"status"`
+	Due         time.Time `json:"due,omitempty"`
 }
 
-func NewTask(description string) *Event {
-	return &Event{
-		Description: description,
-		Status:      IN_PROGRESS,
-	}
+func (e Event) String() string {
+  // TODO: Show due date if not zero
+  return fmt.Sprintf("%s (%s)", e.Description, e.Status)
+
 }
 
-func NewEvent(description string) *Event {
-	return &Event{
-		Description: description,
-	}
-}
-
-func (event Event) Save(writer io.Writer) error {
+func (e *Event) To(writer io.Writer) error {
 	encoder := json.NewEncoder(writer)
-	if encoder == nil {
-		return fmt.Errorf("failed to create encoder")
-	}
-	// Disable indentation
 	encoder.SetIndent("", "")
-	return encoder.Encode(event)
+	return encoder.Encode(e)
 }
 
-func (e Event) IsDue() bool {
-	return e.Date.After(time.Now())
-}
-
-func (e Event) Complete() error {
-	e.Status = DONE
-
-	// Note this behavior may not always be wanted
-	for _, task := range e.Children {
-		task.Complete()
+func NewFrom(reader io.Reader) ([]Event, error) {
+	var events []Event
+	decoder := json.NewDecoder(reader)
+	for {
+		if !decoder.More() {
+			return events, nil
+		}
+		var newEvent Event
+		err := decoder.Decode(&newEvent)
+		if err != nil {
+			return []Event{}, err
+		}
+		events = append(events, newEvent)
 	}
-	return nil
+}
+
+func New(description string, options ...Option) (*Event, error) {
+	newEvent := &Event{
+		Description: description,
+    Status: IN_PROGRESS,
+	}
+
+	for _, option := range options {
+		err := option(newEvent)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return newEvent, nil
+}
+
+func Due(date time.Time) Option {
+	return func(e *Event) error {
+		e.Due = date
+		return nil
+	}
 }

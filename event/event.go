@@ -2,9 +2,16 @@ package event
 
 import (
 	"encoding/json"
-  "fmt"
+	"fmt"
 	"io"
 	"time"
+)
+
+type Status string
+
+const (
+	IN_PROGRESS = "ACTIVE"
+	DONE        = "DONE"
 )
 
 type Option func(*Event) error
@@ -15,9 +22,8 @@ type Event struct {
 }
 
 func (e Event) String() string {
-  // TODO: Show due date if not zero
-  return fmt.Sprintf("%s (%s)", e.Description, e.Status)
-
+	// TODO: Show due date if not zero
+	return fmt.Sprintf("%s (%s)", e.Description, e.Status)
 }
 
 func (e *Event) To(writer io.Writer) error {
@@ -45,7 +51,7 @@ func NewFrom(reader io.Reader) ([]Event, error) {
 func New(description string, options ...Option) (*Event, error) {
 	newEvent := &Event{
 		Description: description,
-    Status: IN_PROGRESS,
+		Status:      IN_PROGRESS,
 	}
 
 	for _, option := range options {

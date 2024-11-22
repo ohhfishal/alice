@@ -6,5 +6,6 @@ import (
 
 type API interface {
 	Create(event.Event) error
-	List() error
+	List() ([]string, error)
+	Mark(int, event.Status) error
 }

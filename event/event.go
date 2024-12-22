@@ -16,6 +16,7 @@ const (
 
 type Option func(*Event) error
 type Event struct {
+	ID          string    `json:"id"`
 	Description string    `json:"description"`
 	Status      Status    `json:"status"`
 	Due         time.Time `json:"due,omitempty"`

@@ -17,7 +17,7 @@ func AutoRegister func(database *Database) error {
 type Option func(*Database) error
 func New(options ...Option) (Database, error) {
   database := Database{}
-  for _, option := options {
+  for _, option := range options {
     if err := option(&database); err != nil {
       return database, err
     }
